@@ -80,7 +80,13 @@ include(CheckIncludeFile)
 check_include_file("sys/wait.h" HAVE_SYS_WAIT_H)
 check_include_file("unistd.h" HAVE_UNISTD_H)
 check_include_file("asm/byteorder.h" HAVE_ASM_BYTEORDER_H)
-check_include_file("dirent.h" HAVE_DIRENT_H)
+if(EMSCRIPTEN)
+    # Emscripten's sysroot provides dirent.h but check_include_file
+    # fails during cross-compilation.  Force it so i_glob.c compiles.
+    set(HAVE_DIRENT_H TRUE)
+else()
+    check_include_file("dirent.h" HAVE_DIRENT_H)
+endif()
 
 option(BUILD_GL "Enable OpenGL rendering code" ON)
 if(BUILD_GL)

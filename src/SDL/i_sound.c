@@ -234,8 +234,11 @@ static int getSliceSize(void)
   limit = snd_samplerate / TICRATE;
 
 #ifdef __EMSCRIPTEN__
-  // Help prevent buffer underrun crackles in WASM without too much sound lag
-  limit <<= 2;
+  // Help prevent buffer underrun crackles in WASM without too much sound lag.
+  // Chromium's ScriptProcessorNode runs on the main thread, so a larger
+  // buffer (4096 samples ≈ 85 ms @ 48 kHz) is needed to survive brief
+  // main-thread stalls caused by key-repeat handling, layout, etc.
+  limit <<= 4;
 #endif
 
   // Try all powers of two, not exceeding the limit.
