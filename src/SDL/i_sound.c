@@ -235,10 +235,10 @@ static int getSliceSize(void)
 
 #ifdef __EMSCRIPTEN__
   // Help prevent buffer underrun crackles in WASM without too much sound lag.
-  // Chromium's ScriptProcessorNode runs on the main thread, so a larger
-  // buffer (4096 samples ≈ 85 ms @ 48 kHz) is needed to survive brief
-  // main-thread stalls caused by key-repeat handling, layout, etc.
-  limit <<= 4;
+  // 8x → 2048 samples ≈ 42 ms @ 48 kHz — a compromise between the
+  // original 4x (stutter on Chromium during key-repeat) and 16x
+  // (perceptible SFX lag).
+  limit <<= 3;
 #endif
 
   // Try all powers of two, not exceeding the limit.
